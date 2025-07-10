@@ -15,9 +15,11 @@ jobs:
         run: |
           curl -X POST https://f86fa8275c89.ngrok-free.app/webhook/receiver \
           -H "Content-Type: application/json" \
-          -H "X-GitHub-Event: ${{ github.event_name }}" \
+          -H "X-GitHub-Event: ${GITHUB_EVENT_NAME}" \
           -d '{
-            "author": "${{ github.actor }}",
-            "ref": "${{ github.ref }}",
-            "timestamp": "${{ github.event.head_commit.timestamp }}"
+            "event_type": "'${{ github.event_name }}'",
+            "author": "'${{ github.actor }}'",
+            "ref": "'${{ github.ref }}'",
+            "repository": "'${{ github.repository }}'",
+            "timestamp": "'${{ github.event.head_commit.timestamp }}'"
           }'
