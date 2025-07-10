@@ -1,18 +1,24 @@
-name: Webhook Logger
+name: Trigger Webhook on Push and PR
 
 on:
   push:
     branches:
-      - main
+      - '**'  # triggers on push to any branch
   pull_request:
-    types: [opened, closed, synchronize]
+    types: [opened, synchronize, closed]
 
 jobs:
-  send-webhook:
+  notify-webhook:
     runs-on: ubuntu-latest
     steps:
-      - name: Log Webhook to MongoDB
+      - name: Send webhook to Flask server
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"action": "'${{ github.event_name }}'", "author": "'${{ github.actor }}'", "ref": "'${{ github.ref }}'", "timestamp": "'${{ github.event.head_commit.timestamp }}'"}' \
-          https://efa6-154-160-23-153.ngrok-free.app/webhook/receiver
+          curl -X POST https://https://f86fa8275c89.ngrok-free.app/webhook/receiver \
+          -H "Content-Type: application/json" \
+          -d '{
+            "event_type": "${{ github.event_name }}",
+            "author": "${{ github.actor }}",
+            "ref": "${{ github.ref }}",
+            "repository": "${{ github.repository }}",
+            "timestamp": "${{ github.event.head_commit.timestamp }}"
+          }'
